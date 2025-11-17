@@ -3,3 +3,5 @@ numpy
 tensorflow
 keras
 matplotlib
+Pillow
+flask
