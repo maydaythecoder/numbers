@@ -1,0 +1,23 @@
+Training section - loads MNIST dataset and creates neural network
+    Load MNIST handwritten digits dataset
+    Normalize the training and test data
+    Create sequential neural network model with:
+        - Flatten layer to convert 2D images to 1D
+        - Two hidden layers with 128 units each using ReLU activation
+        - Output layer with 10 units (for digits 0-9) using softmax activation
+    Compile model with Adam optimizer and sparse categorical crossentropy loss
+
+    Train the model for 3 epochs
+        Evaluate model performance on test data
+        Save the trained model to 'handwritten_digits.model'
+        Load the pre-trained model from file
+
+Prediction section - loads custom digit images and makes predictions
+    Loop through digit images in 'digits/' directory
+        Load image and extract grayscale channel
+       Invert colors and convert to array format
+       Make prediction using the trained model
+       Print the predicted digit
+    Display the image
+       Move to next image
+       Handle errors and continue with next image
