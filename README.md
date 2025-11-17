@@ -4,9 +4,12 @@ A neural network-based handwritten digit recognition system using TensorFlow/Ker
 
 ## Features
 
+- **Multiple Interfaces:**
+  - 🌐 Web interface with interactive drawing canvas
+  - 🖥️ Desktop GUI application
+  - 📸 Batch image processing from files
 - Automatic model training (if no saved model exists)
-- Processes multiple digit images sequentially
-- Displays predictions with visual output
+- Real-time digit recognition with confidence scores
 - Uses a deep neural network with 2 hidden layers (128 units each)
 
 ## Requirements
@@ -50,24 +53,73 @@ A neural network-based handwritten digit recognition system using TensorFlow/Ker
 
 ## Usage
 
-1. **Place your digit images in the `digits/` folder:**
+### Quick Start (Recommended)
 
+Use the unified launcher script:
+
+```bash
+# Interactive menu
+python run.py
+
+# Or directly specify the mode
+python run.py web      # Start web interface
+python run.py gui      # Start desktop GUI
+python run.py images   # Process images from digits/ folder
+```
+
+You can also use the shell script:
+
+```bash
+./run.sh web    # Web interface
+./run.sh gui    # Desktop GUI
+./run.sh images # Process images
+```
+
+### Application Modes
+
+#### 1. Web Interface
+
+```bash
+python run.py web
+# or
+python web_app.py
+```
+
+- Opens a web server on `http://localhost:5000`
+- Draw digits in a 25x25 grid canvas
+- View predictions with confidence scores and probability distribution
+- Works in any modern web browser
+
+#### 2. Desktop GUI
+
+```bash
+python run.py gui
+# or
+python gui_app.py
+```
+
+- Native desktop application
+- Draw digits with your mouse
+- Real-time predictions
+- Simple and fast
+
+#### 3. Batch Image Processing
+
+```bash
+python run.py images
+# or
+python recognition.py
+```
+
+1. **Place your digit images in the `digits/` folder:**
    - Name them as `digit1.png`, `digit2.png`, `digit3.png`, etc.
    - Images should be grayscale digit images
 
-2. **Run the recognition script:**
-
-   ```bash
-   python recognition.py
-   ```
-
-3. **What happens:**
-
+2. **What happens:**
    - **First run:** The script will automatically download the MNIST dataset, train a new model (takes a few minutes), save it as `handwritten_digits.model.keras`, then process your images
    - **Subsequent runs:** The script will load the saved model and immediately process your images
 
-4. **Output:**
-
+3. **Output:**
    - The script prints predictions for each digit image
    - Each image is displayed using matplotlib
    - Close each image window to proceed to the next one
@@ -76,12 +128,18 @@ A neural network-based handwritten digit recognition system using TensorFlow/Ker
 
 ```text
 numbers/
-├── digits/              # Place your digit images here (digit1.png, digit2.png, ...)
-├── recognition.py       # Main script
-├── requirements.txt     # Python dependencies
-├── pyrightconfig.json   # Type checker configuration
-├── tensorflow.pyi       # Type stubs for TensorFlow
-└── README.md           # This file
+├── digits/                  # Place your digit images here (digit1.png, digit2.png, ...)
+├── templates/
+│   └── index.html          # Web interface HTML template
+├── recognition.py           # Batch image processing script
+├── web_app.py              # Flask web application
+├── gui_app.py              # Tkinter desktop GUI
+├── run.py                  # Unified launcher script (recommended)
+├── run.sh                  # Shell launcher script
+├── requirements.txt        # Python dependencies
+├── pyrightconfig.json      # Type checker configuration
+├── tensorflow.pyi          # Type stubs for TensorFlow
+└── README.md              # This file
 ```
 
 ## Model Details
