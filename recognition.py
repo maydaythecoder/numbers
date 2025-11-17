@@ -15,9 +15,9 @@ if train_new_model:
     X_test = tf.keras.utils.normalize(X_test, axis=1)  
     model = tf.keras.models.Sequential()  
     model.add(tf.keras.layers.Flatten())  
-    model.add(tf.keras.layers.Dense(units=128, activation=tf.nn.leaky_relu))  
-    model.add(tf.keras.layers.Dense(units=128, activation=tf.nn.leaky_relu))  
-    model.add(tf.keras.layers.Dense(units=10, activation=tf.nn.softmax))  
+    model.add(tf.keras.layers.Dense(units=128, activation='leaky_relu'))  # Use string for Keras 3.x compatibility
+    model.add(tf.keras.layers.Dense(units=128, activation='leaky_relu'))  # Use string for Keras 3.x compatibility  
+    model.add(tf.keras.layers.Dense(units=10, activation='softmax'))  # Use string for Keras 3.x compatibility  
     model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
     model.fit(X_train, y_train, epochs=3)
     val_loss, val_acc = model.evaluate(X_test, y_test)
@@ -25,7 +25,11 @@ if train_new_model:
     print(val_acc)
     model.save('handwritten_digits.model.keras')
 else:
-    model = tf.keras.models.load_model('handwritten_digits.model.keras')  
+    # Load with safe_mode=False for compatibility with old models
+    try:
+        model = tf.keras.models.load_model('handwritten_digits.model.keras', safe_mode=False)
+    except:
+        model = tf.keras.models.load_model('handwritten_digits.model.keras')  
 
 image_number = 1
 while os.path.isfile('digits/digit{}.png'.format(image_number)):
