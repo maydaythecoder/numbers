@@ -12,3 +12,8 @@ __pycache__/
 *.pywzzz
 *.pyzzzz
 *.pywzzzz
+
+# Model files
+models/*.keras
+models/*.keras.*
+!models/.gitkeep

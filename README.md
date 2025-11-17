@@ -82,7 +82,7 @@ You can also use the shell script:
 ```bash
 python run.py web
 # or
-python web_app.py
+python apps/web_app.py
 ```
 
 - Opens a web server on `http://localhost:5000`
@@ -95,7 +95,7 @@ python web_app.py
 ```bash
 python run.py gui
 # or
-python gui_app.py
+python apps/gui_app.py
 ```
 
 - Native desktop application
@@ -108,7 +108,7 @@ python gui_app.py
 ```bash
 python run.py images
 # or
-python recognition.py
+python scripts/recognition.py
 ```
 
 1. **Place your digit images in the `digits/` folder:**
@@ -116,7 +116,7 @@ python recognition.py
    - Images should be grayscale digit images
 
 2. **What happens:**
-   - **First run:** The script will automatically download the MNIST dataset, train a new model (takes a few minutes), save it as `handwritten_digits.model.keras`, then process your images
+   - **First run:** The script will automatically download the MNIST dataset, train a new model (takes a few minutes), save it as `models/handwritten_digits.model.keras`, then process your images
    - **Subsequent runs:** The script will load the saved model and immediately process your images
 
 3. **Output:**
@@ -128,18 +128,33 @@ python recognition.py
 
 ```text
 numbers/
-├── digits/                  # Place your digit images here (digit1.png, digit2.png, ...)
+├── apps/                   # Application entry points
+│   ├── web_app.py          # Flask web application
+│   └── gui_app.py          # Tkinter desktop GUI
+├── digit_recognition/      # Core library (model, preprocessing, prediction)
+│   ├── __init__.py
+│   ├── data.py             # Data loading utilities
+│   ├── model.py            # Model architecture and training
+│   ├── paths.py            # Path configuration
+│   ├── predict.py          # Prediction functions
+│   └── preprocess.py       # Image preprocessing
+├── digits/                 # Place your digit images here (digit1.png, digit2.png, ...)
+├── docs/                   # any text or documentation files
+├── models/                 # Saved model files
+│   └── handwritten_digits.model.keras
+├── scripts/                # Utility scripts
+│   ├── fix_model.py        # Model compatibility fix utility
+│   └── recognition.py      # Batch image processing script
 ├── templates/
 │   └── index.html          # Web interface HTML template
-├── recognition.py           # Batch image processing script
-├── web_app.py              # Flask web application
-├── gui_app.py              # Tkinter desktop GUI
+├── venv/                   # Virtual environment
+├── pyrightconfig.json      # Type checker configuration
+├── .hintrc                 # Hint configuration
+├── README.md               # This file
+├── requirements.txt        # Python dependencies
 ├── run.py                  # Unified launcher script (recommended)
 ├── run.sh                  # Shell launcher script
-├── requirements.txt        # Python dependencies
-├── pyrightconfig.json      # Type checker configuration
-├── tensorflow.pyi          # Type stubs for TensorFlow
-└── README.md              # This file
+└──  tensorflow.pyi         # Type stubs for TensorFlow
 ```
 
 ## Model Details
@@ -154,6 +169,16 @@ numbers/
 
 ## Notes
 
-- The model automatically trains on first run if `handwritten_digits.model.keras` doesn't exist
+- The model automatically trains on first run if `models/handwritten_digits.model.keras` doesn't exist
 - Images should be in PNG format and named sequentially starting from `digit1.png`
 - The script processes images until it can't find the next sequential image
+
+## Development
+
+The codebase is organized into:
+
+- **`apps/`**: Application entry points (web and GUI interfaces)
+- **`scripts/`**: Utility scripts for training, processing, and maintenance
+- **`digit_recognition/`**: Core library with reusable components
+- **`models/`**: Saved model files (gitignored in production)
+- **`digits/`**: Test images for batch processing

@@ -1,14 +1,19 @@
-"""
-Script to fix the model compatibility issue by rebuilding it with correct activations.
-This loads the weights from the old model and saves a new compatible model.
-"""
+"""Fix model compatibility issues by rebuilding with the current architecture."""
 import os
+import sys
+from pathlib import Path
+
 import tensorflow as tf
-import json
+
+# Add project root to path
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
+
+from digit_recognition import MODEL_PATH, build_model
 
 def fix_model():
-    old_model_path = 'handwritten_digits.model.keras'
-    backup_path = 'handwritten_digits.model.keras.backup'
+    old_model_path = MODEL_PATH
+    backup_path = MODEL_PATH.parent / 'handwritten_digits.model.keras.backup'
     
     if not os.path.exists(old_model_path):
         print(f"Model file {old_model_path} not found!")
@@ -20,12 +25,7 @@ def fix_model():
     os.rename(old_model_path, backup_path)
     
     print("Rebuilding model with correct architecture...")
-    # Rebuild the model with string activations (Keras 3.x compatible)
-    model = tf.keras.models.Sequential()
-    model.add(tf.keras.layers.Flatten(input_shape=(28, 28)))
-    model.add(tf.keras.layers.Dense(units=128, activation='leaky_relu'))
-    model.add(tf.keras.layers.Dense(units=128, activation='leaky_relu'))
-    model.add(tf.keras.layers.Dense(units=10, activation='softmax'))
+    model = build_model()
     
     print("Loading weights from old model...")
     try:
@@ -41,7 +41,7 @@ def fix_model():
                     print(f"  Warning: Could not load weights for layer {i}: {e}")
     except Exception as e:
         print(f"Could not load weights from old model: {e}")
-        print("You'll need to retrain the model. Run: python recognition.py")
+        print("You'll need to retrain the model. Run: python scripts/recognition.py")
         # Restore backup
         os.rename(backup_path, old_model_path)
         return
@@ -56,4 +56,3 @@ def fix_model():
 
 if __name__ == '__main__':
     fix_model()
-

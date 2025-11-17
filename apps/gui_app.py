@@ -1,9 +1,17 @@
+import sys
+from pathlib import Path
 import tkinter as tk
 from tkinter import Canvas, Button, Label
-import numpy as np
-import tensorflow as tf
-from PIL import Image, ImageDraw
 import io
+
+import numpy as np
+from PIL import Image
+
+# Add project root to path
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
+
+from digit_recognition import load_trained_model, predict_preprocessed, preprocess_image_array
 
 class DigitRecognizerGUI:
     def __init__(self, root):
@@ -12,9 +20,9 @@ class DigitRecognizerGUI:
         
         # Load model
         try:
-            self.model = tf.keras.models.load_model('handwritten_digits.model.keras')
+            self.model = load_trained_model()
         except Exception as e:
-            raise RuntimeError(f"Could not load model. Error: {e}. You may need to retrain the model with: python recognition.py")
+            raise RuntimeError(f"Could not load model. Error: {e}. You may need to retrain the model with: python scripts/recognition.py")
         
         # Canvas settings
         self.canvas_size = 250  # 25x25 grid * 10 pixels per cell
@@ -90,16 +98,11 @@ class DigitRecognizerGUI:
         
         # Convert to numpy array and normalize
         img_array = np.array(img)
-        img_array = np.invert(img_array)  # Invert colors (MNIST is white on black)
-        img_array = img_array.astype('float32') / 255.0
-        
-        # Reshape for model (1, 28, 28)
-        img_array = img_array.reshape(1, 28, 28)
+        img_array = preprocess_image_array(img_array)
         
         # Predict
-        prediction = self.model.predict(img_array, verbose=0)
-        predicted_digit = np.argmax(prediction)
-        confidence = prediction[0][predicted_digit] * 100
+        predicted_digit, probabilities = predict_preprocessed(self.model, img_array)
+        confidence = probabilities[predicted_digit] * 100
         
         # Update label
         self.prediction_label.config(

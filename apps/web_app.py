@@ -1,18 +1,26 @@
-from flask import Flask, render_template, request, jsonify
-import numpy as np
-import tensorflow as tf
-from PIL import Image
 import base64
 import io
 import re
+import sys
+from pathlib import Path
 
-app = Flask(__name__)
+import numpy as np
+from flask import Flask, jsonify, render_template, request
+from PIL import Image
+
+# Add project root to path
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
+
+from digit_recognition import load_trained_model, predict_preprocessed, preprocess_image_array
+
+app = Flask(__name__, template_folder=str(PROJECT_ROOT / "templates"))
 
 # Load model
 try:
-    model = tf.keras.models.load_model('handwritten_digits.model.keras')
+    model = load_trained_model()
 except Exception as e:
-    raise RuntimeError(f"Could not load model. Error: {e}. You may need to retrain the model with: python recognition.py")
+    raise RuntimeError(f"Could not load model. Error: {e}. You may need to retrain the model with: python scripts/recognition.py")
 
 @app.route('/')
 def index():
@@ -43,20 +51,12 @@ def predict():
         img = img.resize((28, 28), Image.Resampling.LANCZOS)
         
         # Convert to numpy array and normalize
-        img_array = np.array(img)
-        img_array = np.invert(img_array)  # Invert colors
-        img_array = img_array.astype('float32') / 255.0
-        
-        # Reshape for model
-        img_array = img_array.reshape(1, 28, 28)
+        prepped = preprocess_image_array(np.array(img))
         
         # Predict
-        prediction = model.predict(img_array, verbose=0)
-        predicted_digit = int(np.argmax(prediction))
-        confidence = float(prediction[0][predicted_digit] * 100)
-        
-        # Get all probabilities
-        probabilities = [float(p) * 100 for p in prediction[0]]
+        predicted_digit, probabilities = predict_preprocessed(model, prepped)
+        confidence = float(probabilities[predicted_digit] * 100)
+        probabilities = [float(p) * 100 for p in probabilities]
         
         return jsonify({
             'digit': predicted_digit,

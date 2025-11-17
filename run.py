@@ -7,6 +7,11 @@ import os
 import sys
 import subprocess
 import argparse
+from pathlib import Path
+
+# Ensure we can import from project
+PROJECT_ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(PROJECT_ROOT))
 
 def check_venv():
     """Check if virtual environment is activated, activate if not."""
@@ -21,15 +26,16 @@ def check_venv():
 
 def check_model():
     """Check if model file exists."""
-    model_path = 'handwritten_digits.model.keras'
-    if not os.path.exists(model_path):
+    from digit_recognition import MODEL_PATH
+    if not MODEL_PATH.exists():
         print("❌ Model file not found!")
         print("   Training new model...")
         try:
-            subprocess.run([sys.executable, 'recognition.py'], check=True)
+            recognition_script = PROJECT_ROOT / 'scripts' / 'recognition.py'
+            subprocess.run([sys.executable, str(recognition_script)], check=True, cwd=str(PROJECT_ROOT))
             print("✅ Model trained successfully!")
         except subprocess.CalledProcessError:
-            print("❌ Failed to train model. Please run: python recognition.py")
+            print("❌ Failed to train model. Please run: python scripts/recognition.py")
             return False
     return True
 
@@ -39,7 +45,8 @@ def run_web():
     print("   Open http://localhost:5000 in your browser")
     print("   Press Ctrl+C to stop\n")
     try:
-        subprocess.run([sys.executable, 'web_app.py'])
+        web_app = PROJECT_ROOT / 'apps' / 'web_app.py'
+        subprocess.run([sys.executable, str(web_app)], cwd=str(PROJECT_ROOT))
     except KeyboardInterrupt:
         print("\n\n👋 Web interface stopped.")
 
@@ -48,7 +55,8 @@ def run_gui():
     print("🖥️  Starting desktop GUI...")
     print("   Close the window to exit\n")
     try:
-        subprocess.run([sys.executable, 'gui_app.py'])
+        gui_app = PROJECT_ROOT / 'apps' / 'gui_app.py'
+        subprocess.run([sys.executable, str(gui_app)], cwd=str(PROJECT_ROOT))
     except KeyboardInterrupt:
         print("\n\n👋 GUI stopped.")
 
@@ -56,7 +64,8 @@ def run_recognition():
     """Run the original recognition script."""
     print("📸 Processing images from digits/ folder...\n")
     try:
-        subprocess.run([sys.executable, 'recognition.py'])
+        recognition_script = PROJECT_ROOT / 'scripts' / 'recognition.py'
+        subprocess.run([sys.executable, str(recognition_script)], cwd=str(PROJECT_ROOT))
     except KeyboardInterrupt:
         print("\n\n👋 Recognition stopped.")
 
