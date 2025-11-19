@@ -46,12 +46,15 @@ def predict():
         image_bytes = base64.b64decode(image_data)
         img = Image.open(io.BytesIO(image_bytes))
         
-        # Convert to grayscale and resize to 28x28
+        # Convert to grayscale and resize to 28x28 (standard format)
+        # Match the format of digit images in digits/ folder: black digits on white background
         img = img.convert('L')
         img = img.resize((28, 28), Image.Resampling.LANCZOS)
         
-        # Convert to numpy array and normalize
-        prepped = preprocess_image_array(np.array(img))
+        # Convert to numpy array and preprocess
+        # preprocess_image_array inverts (black on white -> white on black) and normalizes to [0, 1]
+        img_array = np.array(img)
+        prepped = preprocess_image_array(img_array)
         
         # Predict
         predicted_digit, probabilities = predict_preprocessed(model, prepped)

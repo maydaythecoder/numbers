@@ -46,7 +46,7 @@
             border: 3px solid #333;
             border-radius: 10px;
             cursor: crosshair;
-            background: black;
+            background: white;
             display: block;
         }
         
@@ -176,9 +176,9 @@
         let lastY = null;
         
         // Set canvas style
-        ctx.fillStyle = 'black';
+        ctx.fillStyle = 'white';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.strokeStyle = 'white';
+        ctx.strokeStyle = 'black';
         ctx.lineWidth = 8;
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
@@ -235,7 +235,7 @@
         }
         
         clearBtn.addEventListener('click', () => {
-            ctx.fillStyle = 'black';
+            ctx.fillStyle = 'white';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             resultDiv.style.display = 'none';
         });
